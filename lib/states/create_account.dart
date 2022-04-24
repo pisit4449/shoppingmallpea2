@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
 import 'package:shoppingmallpea2/utility/my_dialog.dart';
 import 'package:shoppingmallpea2/widgets/show_image.dart';
+import 'package:shoppingmallpea2/widgets/show_progress.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -27,48 +29,49 @@ class _CreateAccountState extends State<CreateAccount> {
     checkPermission();
   }
 
-  Future<Null> checkPermission()async{
+  Future<Null> checkPermission() async {
     bool locationService;
     LocationPermission locationPermission;
 
     locationService = await Geolocator.isLocationServiceEnabled();
     if (locationService) {
       print('Service Location Open');
-      
+
       locationPermission = await Geolocator.checkPermission();
-          if (locationPermission == LocationPermission.denied) {
-              locationPermission = await Geolocator.requestPermission();
-              if (locationPermission == LocationPermission.deniedForever) {
-                MyDialog().alertLocationService(context(), 'ไม่อนุญาตแชร์ Location', 'โปรดแชร์ Location');
-              } else {
-                findLatLng();
-              }
-          } else {
-            if (locationPermission == LocationPermission.deniedForever) {
-              MyDialog().alertLocationService(context(), 'ไม่อนุญาตแชร์ Location', 'โปรดแชร์ Location');
-            } else {
-              findLatLng();
-            }
-          }
-
-
+      if (locationPermission == LocationPermission.denied) {
+        locationPermission = await Geolocator.requestPermission();
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context(), 'ไม่อนุญาตแชร์ Location', 'โปรดแชร์ Location');
+        } else {
+          findLatLng();
+        }
+      } else {
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context(), 'ไม่อนุญาตแชร์ Location', 'โปรดแชร์ Location');
+        } else {
+          findLatLng();
+        }
+      }
     } else {
       print('Service Location Close');
-      MyDialog().alertLocationService(context(), 'Location ของคุณปิดอยู่', 'กรุณาเปิด Location Service');
+      MyDialog().alertLocationService(
+          context(), 'Location ของคุณปิดอยู่', 'กรุณาเปิด Location Service');
     }
   }
 
-   Future<Null> findLatLng()async{
-    print('### findLatLng ===> Work'); 
+  Future<Null> findLatLng() async {
+    print('### findLatLng ===> Work');
     Position? position = await findPosition();
     setState(() {
       lat = position!.latitude;
-    lng = position.longitude;
-    print('### lat = $lat, lng = $lng');
+      lng = position.longitude;
+      print('### lat = $lat, lng = $lng');
     });
   }
 
-  Future<Position?> findPosition()async{
+  Future<Position?> findPosition() async {
     Position position;
     try {
       position = await Geolocator.getCurrentPosition();
@@ -76,7 +79,6 @@ class _CreateAccountState extends State<CreateAccount> {
     } catch (e) {
       return null;
     }
-
   }
 
   @override
@@ -103,10 +105,46 @@ class _CreateAccountState extends State<CreateAccount> {
           buildPassword(size),
           buildPicture(),
           buildAvatar(size),
+          buildLatLngTitle(),
+          buildMap(),
         ],
       ),
     );
   }
+
+  Container buildLatLngTitle() {
+    return Container(
+          margin: EdgeInsets.symmetric(vertical: 10),
+          child: ShowTitle(
+            title: 'แสดพิกัดที่คุณอยู่',
+            textStyle: MyConstant().h2_Style(),
+          ),
+        );
+  }
+
+  Set<Marker> setMarker() => <Marker>[
+        Marker(
+          markerId: MarkerId('id'),
+          position: LatLng(lat!, lng!),
+          infoWindow: InfoWindow(
+              title: 'คุณอยู่ที่นี่', snippet: 'Lat = $lat, Lng = $lng'),
+        ),
+      ].toSet();
+
+  Widget buildMap() => Container(
+        height: 300,
+        width: double.infinity,
+        child: lat == null
+            ? ShowProgress()
+            : GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(lat!, lng!),
+                  zoom: 16,
+                ),
+                onMapCreated: (controller) {},
+                markers: setMarker(),
+              ),
+      );
 
   Future<Null> chooseImage(ImageSource source) async {
     try {
