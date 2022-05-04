@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _CreateAccountState extends State<CreateAccount> {
+  String avatar = '';
   String? typeUser;
   File? file;
   double? lat, lng;
@@ -128,15 +130,74 @@ class _CreateAccountState extends State<CreateAccount> {
     );
   }
 
-  Future<Null> uploadPictureAndInsertData()async{
+  Future<Null> uploadPictureAndInsertData() async {
     String name = nameController.text;
     String address = addressController.text;
     String phone = phoneController.text;
     String user = userController.text;
     String password = passwordController.text;
-    print('### name = $name, address = $address, phone = $phone, user = $user, password = $password');
-    String path = '${MyConstant.domain}/shoppingmallnew/getUserWhereUser.php?isAdd=true&user=$user';
-    await Dio().get(path).then((value) => print('### value ===> $value'));
+    print(
+        '### name = $name, address = $address, phone = $phone, user = $user, password = $password');
+    String path =
+        '${MyConstant.domain}/shoppingmallnew/getUserWhereUser.php?isAdd=true&user=$user';
+    await Dio().get(path).then((value) async {
+      print('### value ===> $value');
+      if (value.toString() == 'null') {
+        print('### User OK');
+
+        if (file == null) {
+          processInsertMySQL(
+            name: name,
+            address: address,
+            phone: phone,
+            user: user,
+            password: password,
+          );
+        } else {
+          print('### process Upload Avatar');
+          String apiSaveAvatar =
+              '${MyConstant.domain}/shoppingmallnew/saveAvatar.php';
+          int i = Random().nextInt(100000);
+          String nameAvatar = 'avatar$i.jpg';
+          Map<String, dynamic> map = Map();
+          map['file'] =
+              await MultipartFile.fromFile(file!.path, filename: nameAvatar);
+          FormData data = FormData.fromMap(map);
+          await Dio().post(apiSaveAvatar, data: data).then((value) {
+            avatar = '/shoppingmallnew/avatar/$nameAvatar';
+            processInsertMySQL(
+              name: name,
+              address: address,
+              phone: phone,
+              user: user,
+              password: password,
+            );
+          });
+        }
+      } else {
+        MyDialog()
+            .normalDialog(context(), 'User False ?', 'Please Change User');
+      }
+    });
+  }
+
+  Future<Null> processInsertMySQL(
+      {String? name,
+      String? address,
+      String? phone,
+      String? user,
+      String? password}) async {
+    print('### ProcessInsertMySQL Work and avatar ===>> $avatar');
+    String apiInsertUser =
+        '${MyConstant.domain}/shoppingmallnew/insertUser.php?isAdd=true&name=$name&type=$typeUser&address=$address&phone=$phone&user=$user&password=$password&avatar=$avatar&lat=$lat&lng=$lng';
+    await Dio().get(apiInsertUser).then((value) {
+      if (value.toString() == 'true') {
+        Navigator.pop(context());
+      } else {
+        MyDialog().normalDialog(
+            context(), 'Create New User False !!!', 'Please try Again');
+      }
+    });
   }
 
   IconButton buildCreateNewAccount() {

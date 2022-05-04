@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoppingmallpea2/states/add_product.dart';
 import 'package:shoppingmallpea2/states/authen.dart';
 import 'package:shoppingmallpea2/states/buyer_service.dart';
 import 'package:shoppingmallpea2/states/create_account.dart';
@@ -12,13 +14,37 @@ final Map<String, WidgetBuilder> map = {
   '/buyerService': (BuildContext context) => BuyerService(),
   '/sellerService': (BuildContext context) => SellerService(),
   '/riderService': (BuildContext context) => RiderService(),
+  '/addProduct': (BuildContext context) => AddProduct(),
 };
 
 String? initialRoute;
 
-void main() {
-  initialRoute = MyConstant.routeAuthen;
-  runApp(MyApp());
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String? type = preferences.getString('type');
+  print('### type ====>> $type');
+  if (type?.isEmpty ?? true) {
+    initialRoute = MyConstant.routeAuthen;
+    runApp(MyApp());
+  } else {
+    switch (type) {
+      case 'buyer':
+        initialRoute = MyConstant.routeBuyerService;
+        runApp(MyApp());
+        break;
+      case 'seller':
+        initialRoute = MyConstant.routeSellerService;
+        runApp(MyApp());
+        break;
+      case 'rider':
+        initialRoute = MyConstant.routeRiderService;
+        runApp(MyApp());
+        break;
+        break;
+      default:
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -26,10 +52,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MaterialColor materialColor =
+        MaterialColor(0xffff80a9, MyConstant.mapMaterialColor);
     return MaterialApp(
       routes: map,
       title: MyConstant.appName,
       initialRoute: initialRoute,
+      theme: ThemeData(primarySwatch: materialColor),
+      // theme: ThemeData(primaryColor: MyConstant.light),
     );
   }
 }
