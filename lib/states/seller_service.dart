@@ -1,9 +1,14 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmallpea2/bodys/shop_manage_seller.dart';
 import 'package:shoppingmallpea2/bodys/show_Product_seller.dart';
 import 'package:shoppingmallpea2/bodys/show_order_seller.dart';
+import 'package:shoppingmallpea2/models/user_model.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
+import 'package:shoppingmallpea2/widgets/show_progress.dart';
 import 'package:shoppingmallpea2/widgets/show_signout.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
 
@@ -15,35 +20,89 @@ class SellerService extends StatefulWidget {
 }
 
 class _SellerServiceState extends State<SellerService> {
-  List<Widget> widgets = [
-    ShowOrderSeller(),
-    ShopManageSeller(),
-    ShowProductSeller()
-  ];
+  List<Widget> widgets = [];
   int indexWidget = 0;
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    findUserModel();
+  }
+
+  Future<Null> findUserModel() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String id = preferences.getString('id')!;
+    print('### id Login ==> $id');
+    String apiGetUserWhereId =
+        '${MyConstant.domain}/shoppingmallnew/getUserWhereId.php?isAdd=true&id=$id';
+    await Dio().get(apiGetUserWhereId).then((value) {
+      print('## value ==> $value');
+      for (var item in json.decode(value.data)) {
+        setState(() {
+          userModel = UserModel.fromMap(item);
+          // print('### name login = ${userModel!.name}');
+          widgets.add(ShowOrderSeller());
+          widgets.add(ShopManageSeller(userModel: userModel!));
+          widgets.add(ShowProductSeller());
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Seller'),
       ),
-      drawer: Drawer(
-        child: Stack(
-          children: [
-            ShowSignOut(),
-            // ignore: prefer_const_constructors
-            Column(
-              children: [
-                UserAccountsDrawerHeader(accountName: null, accountEmail: null),
-                menuShowOrder(),
-                menuShopManage(),
-                menuShowProduct(),
-              ],
+      drawer: widgets.length == 0
+          ? SizedBox()
+          : Drawer(
+              child: Stack(
+                children: [
+                  ShowSignOut(),
+                  // ignore: prefer_const_constructors
+                  Column(
+                    children: [
+                      buildHead(),
+                      menuShowOrder(),
+                      menuShopManage(),
+                      menuShowProduct(),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),body: widgets[indexWidget],
+      body: widgets.length == 0 ? ShowProgress() : widgets[indexWidget],
     );
+  }
+
+  UserAccountsDrawerHeader buildHead() {
+    return UserAccountsDrawerHeader(
+        otherAccountsPictures: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.face_outlined,
+              size: 36,
+              color: MyConstant.light,
+            ),
+          ),
+        ],
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+              colors: [MyConstant.light, MyConstant.dark],
+              center: Alignment(-0.8, -0.2),
+              radius: 0.5),
+        ),
+        currentAccountPicture: CircleAvatar(
+          backgroundImage:
+              NetworkImage('${MyConstant.domain}${userModel!.avatar}'),
+        ),
+        accountName: Text(userModel == null ? 'Name?' : userModel!.name),
+        accountEmail: Text(userModel == null ? 'Type?' : userModel!.type));
   }
 
   ListTile menuShowOrder() {
