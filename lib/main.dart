@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmallpea2/states/add_product.dart';
+import 'package:shoppingmallpea2/states/add_wallet.dart';
 import 'package:shoppingmallpea2/states/authen.dart';
 import 'package:shoppingmallpea2/states/buyer_service.dart';
 import 'package:shoppingmallpea2/states/create_account.dart';
 import 'package:shoppingmallpea2/states/edit_profile_seller.dart';
 import 'package:shoppingmallpea2/states/rider_service.dart';
 import 'package:shoppingmallpea2/states/seller_service.dart';
+import 'package:shoppingmallpea2/states/show_cart.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
 
 final Map<String, WidgetBuilder> map = {
@@ -17,6 +19,8 @@ final Map<String, WidgetBuilder> map = {
   '/riderService': (BuildContext context) => RiderService(),
   '/addProduct': (BuildContext context) => AddProduct(),
   '/editProfileSeller': (BuildContext context) => EditProfileSeller(),
+  '/showCart':(BuildContext context) => ShowCart(),
+  MyConstant.routeAddWallet:(BuildContext context) => AddWallet(),
 };
 
 String? initialRoute;
