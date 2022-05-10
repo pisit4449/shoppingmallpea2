@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
+import 'package:shoppingmallpea2/widgets/show_image.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
 
 class Bank extends StatefulWidget {
@@ -21,6 +22,11 @@ class _BankState extends State<Bank> {
             buildTitle(),
             ListTile(
               // leading: SvgPicture.asset('images/bbl.svg'),
+              leading: Container(
+                width: 80,
+                height: 80,
+                child: ShowImage(path: MyConstant.bankKT),
+              ),
               title: ShowTitle(
                 title: 'ธนาคารกรุงเทพ สาขาบิ๊กซี บางนา',
                 textStyle: MyConstant().h2_Style(),

@@ -23,6 +23,7 @@ class MyConstant {
   static String image4 = 'images/image4.png';
   static String image5 = 'images/image5.png';
   static String avatar = 'images/avatar.png';
+  static String bankKT = 'images/bll.png';
 
   // Colos
   static Color primary = Color(0xffff80a9);
