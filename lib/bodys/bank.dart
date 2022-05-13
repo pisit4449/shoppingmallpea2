@@ -20,24 +20,75 @@ class _BankState extends State<Bank> {
         child: Column(
           children: [
             buildTitle(),
-            ListTile(
-              // leading: SvgPicture.asset('images/bbl.svg'),
-              leading: Container(
-                width: 80,
-                height: 80,
-                child: ShowImage(path: MyConstant.bankKT),
-              ),
-              title: ShowTitle(
-                title: 'ธนาคารกรุงเทพ สาขาบิ๊กซี บางนา',
-                textStyle: MyConstant().h2_Style(),
-              ),
-              subtitle: ShowTitle(
-                title:
-                    'ชื่อบัญชี นายชัยวุฒิ พรหมบุตร เลขบัญชี 913 - 0 - 04149 - 5',
-                textStyle: MyConstant().h3_Style(),
-              ),
-            )
+            buildBKK(),
+            buildKbank(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildBKK() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 150,
+      child: Center(
+        child: Card(
+          color: Colors.indigo.shade100,
+          child: ListTile(
+            // leading: SvgPicture.asset('images/bbl.svg'),
+            leading: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.indigo,
+              ),
+              width: 80,
+              height: 80,
+              child: ShowImage(path: MyConstant.bankKT),
+            ),
+            title: ShowTitle(
+              title: 'ธนาคารกรุงเทพ สาขาบิ๊กซี บางนา',
+              textStyle: MyConstant().h2_Style(),
+            ),
+            subtitle: ShowTitle(
+              title:
+                  'ชื่อบัญชี นายชัยวุฒิ พรหมบุตร เลขบัญชี 913 - 0 - 04149 - 5',
+              textStyle: MyConstant().h3_Style(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildKbank() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 150,
+      child: Center(
+        child: Card(
+          color: Colors.green.shade100,
+          child: ListTile(
+            // leading: SvgPicture.asset('images/bbl.svg'),
+            leading: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                // color: Colors.indigo,
+              ),
+              width: 80,
+              height: 80,
+              child: ShowImage(path: MyConstant.bankKbank),
+            ),
+            title: ShowTitle(
+              title: 'ธนาคารกสิกรไทย สาขาบิ๊กซี บางนา',
+              textStyle: MyConstant().h2_Style(),
+            ),
+            subtitle: ShowTitle(
+              title:
+                  'ชื่อบัญชี นายชัยวุฒิ พรหมบุตร เลขบัญชี 913 - 0 - 04149 - 5',
+              textStyle: MyConstant().h3_Style(),
+            ),
+          ),
         ),
       ),
     );

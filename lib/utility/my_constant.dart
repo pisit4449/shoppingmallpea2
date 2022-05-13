@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class MyConstant {
   // Gernarol
   static String appName = 'Shopping Pupea';
-  static String domain = 'https://8a0d-27-145-154-4.ngrok.io';
+  static String domain = 'https://4f2a-171-97-111-12.ngrok.io';
+  static String urlPrompay = 'https://promptpay.io/0897513041.png';
+  static String publicKey = 'pkey_test_5rsbc2f03hmdme1mjaz';
 
   // Route
   static String routeAuthen = '/authen';
@@ -23,7 +25,8 @@ class MyConstant {
   static String image4 = 'images/image4.png';
   static String image5 = 'images/image5.png';
   static String avatar = 'images/avatar.png';
-  static String bankKT = 'images/bll.png';
+  static String bankKT = 'images/bbl.png';
+  static String bankKbank = 'images/kbank.png';
 
   // Colos
   static Color primary = Color(0xffff80a9);
