@@ -1,12 +1,17 @@
+// ignore_for_file: prefer_const_constructors, avoid_print, unnecessary_brace_in_string_interps
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmallpea2/models/sqlite_model.dart';
 import 'package:shoppingmallpea2/models/user_model.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
+import 'package:shoppingmallpea2/utility/my_dialog.dart';
 import 'package:shoppingmallpea2/utility/sqlite_helper.dart';
 import 'package:shoppingmallpea2/widgets/show_image.dart';
+import 'package:shoppingmallpea2/widgets/show_nodata.dart';
 import 'package:shoppingmallpea2/widgets/show_progress.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
 
@@ -25,7 +30,6 @@ class _ShowCartState extends State<ShowCart> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     processReadSQLite();
   }
@@ -78,36 +82,27 @@ class _ShowCartState extends State<ShowCart> {
         body: load
             ? ShowProgress()
             : sqliteModels.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          width: 250,
-                          child: ShowImage(path: MyConstant.image2),
-                        ),
-                        ShowTitle(
-                          title: 'Empty Cart',
-                          textStyle: MyConstant().h1_Style(),
-                        ),
-                      ],
-                    ),
+                ? ShowNoData(
+                    title: 'Emty Cart',
+                    pathImage: MyConstant.image2,
                   )
                 : buildContent());
   }
 
-  Column buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        showSeller(),
-        buildHead(),
-        listProduct(),
-        buildDivider(),
-        buildTotal(),
-        buttonController(),
-      ],
+  Container buildContent() {
+    return Container(
+      decoration: MyConstant().gradianLinearBackground(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          showSeller(),
+          buildHead(),
+          listProduct(),
+          buildDivider(),
+          buildTotal(),
+          buttonController(),
+        ],
+      ),
     );
   }
 
@@ -150,8 +145,29 @@ class _ShowCartState extends State<ShowCart> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context(), MyConstant.routeAddWallet);
+          onPressed: () async {
+            // Navigator.pushNamed(context(), MyConstant.routeAddWallet);
+            MyDialog().showProgressDialog(context());
+
+            SharedPreferences preferences = await SharedPreferences.getInstance();
+            String idBuyer = preferences.getString('id')!;
+
+            var path =
+                '${MyConstant.domain}/shoppingmallnew/getWalletWhereIdBuyer.php?isAdd=true&idBuyer=${idBuyer}';
+            await Dio().get(path).then((value) {
+              Navigator.pop(context());
+              if (value.toString() == 'null') {
+                print('#### Action alert add Wallet');
+                MyDialog(
+                  funcAction: () {
+                    Navigator.pop(context());
+                    Navigator.pushNamed(context(), MyConstant.routeAddWallet);
+                  },
+                ).actionDialog(context(), 'No Wallet', 'Please Add Wallet');
+              } else {
+                print('####check Wallet can Payment');
+              }
+            });
           },
           child: Text('Order'),
         ),

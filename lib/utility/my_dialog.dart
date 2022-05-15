@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_void_to_null
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,9 @@ import 'package:shoppingmallpea2/widgets/show_image.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
 
 class MyDialog {
+  final Function()? funcAction;
+  MyDialog({this.funcAction});
+
   Future<Null> alertLocationService(
       BuildContext context, String title, String message) async {
     showDialog(
@@ -57,11 +62,46 @@ class MyDialog {
     );
   }
 
+  Future<Null> actionDialog(
+    BuildContext context,
+    String title,
+    String message,
+  ) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: ListTile(
+          leading: ShowImage(path: MyConstant.image1),
+          title: ShowTitle(
+            title: title,
+            textStyle: MyConstant().h2_Style(),
+          ),
+          subtitle: ShowTitle(
+            title: message,
+            textStyle: MyConstant().h3_Style(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: funcAction,
+            child: Text('OK'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancle'),
+          )
+        ],
+      ),
+    );
+  }
+
   Future<Null> showProgressDialog(BuildContext context) async {
     showDialog(
         context: context,
         builder: (context) => WillPopScope(
+              // ignore: prefer_const_constructors
               child: Center(
+                // ignore: prefer_const_constructors
                 child: CircularProgressIndicator(
                   color: Colors.amber,
                 ),

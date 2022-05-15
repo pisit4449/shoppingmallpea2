@@ -1,8 +1,14 @@
+import 'dart:convert';
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
+import 'package:shoppingmallpea2/utility/my_dialog.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
+
+import 'package:http/http.dart' as http;
 
 class Credic extends StatefulWidget {
   const Credic({Key? key}) : super(key: key);
@@ -91,9 +97,42 @@ class _CredicState extends State<Credic> {
     await omiseFlutter.token
         .create(
             '$name $surname', idCard!, expiryDateMouth!, expiryDateYear!, cvc!)
-        .then((value) {
+        .then((value) async {
       String token = value.id.toString();
       print('### token =======> $token');
+
+      String secredKey = MyConstant.secreKey;
+      String urlAPI = 'https://api.omise.co/charges';
+      String basciAuth = 'Basic ' + base64Encode(utf8.encode(secredKey + ":"));
+
+      Map<String, String> headerMap = {};
+      headerMap['authorization'] = basciAuth;
+      headerMap['Cache-Control'] = 'no-cache';
+      headerMap['Content-Type'] = 'application/x-www-form-urlencoded';
+      String zero = '00';
+      amount = '$amount$zero';
+      print('### mount00 ==> $amount');
+
+      Map<String, dynamic> data = {};
+      data['amount'] = amount;
+      data['currency'] = 'thb';
+      data['card'] = token;
+      Uri uri = Uri.parse(urlAPI);
+
+      http.Response response = await http.post(
+        uri,
+        headers: headerMap,
+        body: data,
+      );
+
+      var resultCharge = json.decode(response.body);
+      // print('### resultCharge = $resultCharge');
+      print('status ของการตัดบัตร =====>> ${resultCharge['status']}');
+
+    }).catchError((value) {
+      String title = value.code;
+      String message = value.message;
+      MyDialog().normalDialog(context(), title, message);
     });
   }
 
@@ -149,6 +188,7 @@ class _CredicState extends State<Credic> {
           if (value!.isEmpty) {
             return 'Please Fill Amount in Blank';
           } else {
+            amount = value.trim();
             return null;
           }
         },

@@ -4,12 +4,14 @@ import 'package:shoppingmallpea2/states/add_product.dart';
 import 'package:shoppingmallpea2/states/add_wallet.dart';
 import 'package:shoppingmallpea2/states/authen.dart';
 import 'package:shoppingmallpea2/states/buyer_service.dart';
+import 'package:shoppingmallpea2/states/confirm_add_wallet.dart';
 import 'package:shoppingmallpea2/states/create_account.dart';
 import 'package:shoppingmallpea2/states/edit_profile_seller.dart';
 import 'package:shoppingmallpea2/states/rider_service.dart';
 import 'package:shoppingmallpea2/states/seller_service.dart';
 import 'package:shoppingmallpea2/states/show_cart.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
+import 'package:shoppingmallpea2/widgets/nev_confirm_add_wallet.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/authen': (BuildContext context) => Authen(),
@@ -21,6 +23,7 @@ final Map<String, WidgetBuilder> map = {
   '/editProfileSeller': (BuildContext context) => EditProfileSeller(),
   '/showCart':(BuildContext context) => ShowCart(),
   MyConstant.routeAddWallet:(BuildContext context) => AddWallet(),
+  MyConstant.routeConfirmAddWallet:(BuildContext context) => ConfirmAddWallet(),
 };
 
 String? initialRoute;

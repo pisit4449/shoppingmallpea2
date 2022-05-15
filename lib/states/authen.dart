@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 import 'dart:ui';
 import 'package:dio/dio.dart';
@@ -35,15 +37,18 @@ class _AuthenState extends State<Authen> {
           behavior: HitTestBehavior.opaque,
           child: Form(
             key: formKey,
-            child: ListView(
-              children: [
-                buildImage(size),
-                buildAppName(),
-                buildUser(size),
-                buildPassword(size),
-                buildLogin(size),
-                buildCreateNewAccount(context),
-              ],
+            child: Container(
+              decoration: MyConstant().gradientRadioBackground(),
+              child: ListView(
+                children: [
+                  buildImage(size),
+                  buildAppName(),
+                  buildUser(size),
+                  buildPassword(size),
+                  buildLogin(size),
+                  buildCreateNewAccount(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -54,7 +59,7 @@ class _AuthenState extends State<Authen> {
   Future<Null> checkAuthen({String? user, String? password}) async {
     String apiCheckAuthen =
         '${MyConstant.domain}/shoppingmallnew/getUserWhereUser.php?isAdd=true&user=$user';
-    await Dio().get(apiCheckAuthen).then((value) async{
+    await Dio().get(apiCheckAuthen).then((value) async {
       print('### value for api ==> $value');
       if (value.toString() == 'null') {
         MyDialog().normalDialog(
@@ -66,11 +71,12 @@ class _AuthenState extends State<Authen> {
             String type = model.type;
             print('### Authen Success in type ===> $type');
 
-              SharedPreferences preferences = await SharedPreferences.getInstance();
-              preferences.setString('id', model.id);
-              preferences.setString('type', type);
-              preferences.setString('user', model.user);
-              preferences.setString('name', model.name);
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
+            preferences.setString('id', model.id);
+            preferences.setString('type', type);
+            preferences.setString('user', model.user);
+            preferences.setString('name', model.name);
 
             switch (type) {
               case 'buyer':
@@ -121,7 +127,6 @@ class _AuthenState extends State<Authen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          height: 60,
           width: size * 0.7,
           margin: EdgeInsets.symmetric(vertical: 16),
           child: ElevatedButton(
@@ -130,6 +135,7 @@ class _AuthenState extends State<Authen> {
               if (formKey.currentState!.validate()) {
                 String user = userController.text;
                 String password = passwordController.text;
+                // ignore: avoid_print
                 print('### usr = $user, password = $password');
                 checkAuthen(user: user, password: password);
               }
@@ -146,6 +152,7 @@ class _AuthenState extends State<Authen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
+          height: 50,
           width: size * 0.7,
           margin: EdgeInsets.only(top: 16),
           child: TextFormField(
@@ -158,6 +165,9 @@ class _AuthenState extends State<Authen> {
               }
             },
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(vertical: 4),
+              fillColor: Colors.white.withOpacity(0.75),
+              filled: true,
               labelStyle: MyConstant().h3_Style(),
               labelText: 'User : ',
               prefixIcon: Icon(
@@ -184,6 +194,7 @@ class _AuthenState extends State<Authen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
+          height: 50,
           width: size * 0.7,
           margin: EdgeInsets.only(top: 16),
           child: TextFormField(
@@ -197,6 +208,9 @@ class _AuthenState extends State<Authen> {
             },
             obscureText: statusRedEye,
             decoration: InputDecoration(
+              fillColor: Colors.white.withOpacity(0.75),
+              filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 4),
               suffixIcon: IconButton(
                 onPressed: () {
                   setState(() {

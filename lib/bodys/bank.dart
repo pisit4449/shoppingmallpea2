@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shoppingmallpea2/utility/my_constant.dart';
+import 'package:shoppingmallpea2/widgets/nev_confirm_add_wallet.dart';
 import 'package:shoppingmallpea2/widgets/show_image.dart';
 import 'package:shoppingmallpea2/widgets/show_title.dart';
 
@@ -24,7 +25,7 @@ class _BankState extends State<Bank> {
             buildKbank(),
           ],
         ),
-      ),
+      ),floatingActionButton: NaviConfrimAddWallet() ,
     );
   }
 

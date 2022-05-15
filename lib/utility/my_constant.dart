@@ -1,11 +1,14 @@
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class MyConstant {
   // Gernarol
   static String appName = 'Shopping Pupea';
-  static String domain = 'https://4f2a-171-97-111-12.ngrok.io';
+  static String domain = 'https://492d-171-97-111-168.ngrok.io';
   static String urlPrompay = 'https://promptpay.io/0897513041.png';
-  static String publicKey = 'pkey_test_5rsbc2f03hmdme1mjaz';
+  static String publicKey = 'pkey_test_5rshhzfs9v5oq3bgcfe';
+  static String secreKey = 'skey_test_5rsbc2gdwncw54c0x3o';
 
   // Route
   static String routeAuthen = '/authen';
@@ -17,6 +20,7 @@ class MyConstant {
   static String routeEditProfileSeller = '/editProfileSeller';
   static String routeShowCart = '/showCart';
   static String routeAddWallet = '/addWallet';
+  static String routeConfirmAddWallet = '/confirmAddWallet';
 
   // Images
   static String image1 = 'images/image1.png';
@@ -45,17 +49,39 @@ class MyConstant {
     800: Color.fromRGBO(255, 255, 128, 0.9),
     900: Color.fromRGBO(255, 255, 128, 1.0),
   };
+  // backgroud
+  BoxDecoration planBackground() =>
+      BoxDecoration(color: MyConstant.light.withOpacity(0.75));
+  BoxDecoration gradianLinearBackground() => BoxDecoration(
+        gradient: LinearGradient(
+          end: Alignment.bottomCenter,
+          begin: Alignment.topCenter,
+          colors: [Colors.white, MyConstant.light, MyConstant.primary],
+        ),
+      );
+
+  BoxDecoration gradientRadioBackground() => BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment(0, -0.5),
+          radius: 1.5,
+          colors: [Colors.white, MyConstant.primary],
+        ),
+      );
 
   // TextStyle
   TextStyle h1_Style() =>
       TextStyle(fontSize: 24, color: dark, fontWeight: FontWeight.bold);
+       TextStyle h1White_Style() =>
+      TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold);
+  TextStyle h1red_Style() => TextStyle(
+      fontSize: 24, color: Colors.red.shade700, fontWeight: FontWeight.bold);
   TextStyle h2_Style() =>
       TextStyle(fontSize: 18, color: dark, fontWeight: FontWeight.w700);
   TextStyle h2White_Style() =>
       TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w700);
   TextStyle h2Red_Style() =>
       TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.w700);
-       TextStyle h2blue_Style() =>
+  TextStyle h2blue_Style() =>
       TextStyle(fontSize: 18, color: Colors.blue, fontWeight: FontWeight.w700);
   TextStyle h3_Style() =>
       TextStyle(fontSize: 14, color: dark, fontWeight: FontWeight.normal);
