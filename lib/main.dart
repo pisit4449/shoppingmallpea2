@@ -1,3 +1,9 @@
+// ignore_for_file: prefer_void_to_null, prefer_const_constructors, avoid_print, non_constant_identifier_names
+
+import 'dart:io';
+// import 'dart:js';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingmallpea2/states/add_product.dart';
@@ -21,14 +27,18 @@ final Map<String, WidgetBuilder> map = {
   '/riderService': (BuildContext context) => RiderService(),
   '/addProduct': (BuildContext context) => AddProduct(),
   '/editProfileSeller': (BuildContext context) => EditProfileSeller(),
-  '/showCart':(BuildContext context) => ShowCart(),
-  MyConstant.routeAddWallet:(BuildContext context) => AddWallet(),
-  MyConstant.routeConfirmAddWallet:(BuildContext context) => ConfirmAddWallet(),
+  '/showCart': (BuildContext context) => ShowCart(),
+  MyConstant.routeAddWallet: (BuildContext context) => AddWallet(),
+  MyConstant.routeConfirmAddWallet: (BuildContext context) =>
+      ConfirmAddWallet(),
 };
 
 String? initialRoute;
 
 Future<Null> main() async {
+
+  HttpOverrides.global = MyHttpOverride();
+
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   String? type = preferences.getString('type');
@@ -70,5 +80,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: materialColor),
       // theme: ThemeData(primaryColor: MyConstant.light),
     );
+  }
+}
+
+class MyHttpOverride extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (cert, host, port) => true;
   }
 }
